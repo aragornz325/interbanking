@@ -53,6 +53,18 @@ async function seed() {
 
   const empresaRepo = AppDataSource.getRepository(EmpresaOrmEntity);
   const transferenciaRepo = AppDataSource.getRepository(TransferenciaOrmEntity);
+  const checkClean = async () => {
+    for (let i = 0; i < 5; i++) {
+      const countEmp = await empresaRepo.count();
+      const countTransf = await transferenciaRepo.count();
+      if (countEmp === 0 && countTransf === 0) return;
+      console.log('[SEED] Esperando limpieza efectiva de tablas...');
+      await new Promise((res) => setTimeout(res, 1000));
+    }
+    throw new Error('[SEED] Las tablas no están vacías después del TRUNCATE');
+  };
+
+  await checkClean();
 
   const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
 
