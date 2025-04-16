@@ -48,7 +48,7 @@ export class TransferenciaOrmEntity {
   @Column({ type: 'timestamp' })
   fecha!: Date;
 
-  @ManyToOne(() => EmpresaOrmEntity)
+  @ManyToOne(() => EmpresaOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'empresa_id' })
   empresa!: EmpresaOrmEntity;
 

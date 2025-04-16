@@ -34,7 +34,7 @@ async function seed() {
   const totalEmpresas = await empresaRepo.count();
   const totalTransferencias = await transferenciaRepo.count();
 
-  if (totalEmpresas > 0 || totalTransferencias > 0) {
+  if (totalEmpresas > 9 || totalTransferencias > 12) {
     console.log(
       '[SEED] Datos ya existentes. No se insertarán nuevos registros.',
     );
@@ -42,23 +42,23 @@ async function seed() {
     return;
   }
 
-  const empresas = Array.from({ length: 5 }).map(() =>
+  const empresas = Array.from({ length: 15 }).map(() =>
     empresaRepo.create({
       cuit: faker.number.int({ min: 10000000000, max: 99999999999 }).toString(),
       razonSocial: faker.company.name(),
-      fechaAdhesion: faker.date.recent({ days: 25 }),
+      fechaAdhesion: faker.date.recent({ days: 60 }),
     }),
   );
   await empresaRepo.save(empresas);
   console.log(`[SEED] Insertadas ${empresas.length} empresas`);
 
-  const transferencias = Array.from({ length: 10 }).map(() => {
+  const transferencias = Array.from({ length: 20 }).map(() => {
     const empresa = faker.helpers.arrayElement(empresas);
     return transferenciaRepo.create({
       cuentaDebito: faker.finance.accountNumber(),
       cuentaCredito: faker.finance.accountNumber(),
       importe: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
-      fecha: faker.date.recent({ days: 20 }),
+      fecha: faker.date.recent({ days: 60 }),
       empresa,
       empresaId: empresa.id,
     });

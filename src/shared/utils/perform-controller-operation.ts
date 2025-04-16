@@ -49,11 +49,11 @@ export abstract class BaseController {
   }: PerformOperationParams<T>): Promise<T> {
     try {
       this.logger.log(
-        `🟢 [${context}] ${functionName ?? 'Operación'} iniciada`,
+        `\x1b[35m🟢 [${context}] ${functionName ?? 'Operación'} iniciada \x1b[35m`,
       );
       const result = await operation();
       this.logger.log(
-        `✅ [${context}] ${functionName ?? 'Operación'} completada con éxito`,
+        `\x1b[35m ✅ [${context}] ${functionName ?? 'Operación'} completada con éxito \x1b[35m`,
       );
       return result;
     } catch (error) {
