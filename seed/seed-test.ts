@@ -1,12 +1,15 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
+import path from 'path';
 import { EmpresaOrmEntity } from '../src/infrastructure/persistence/typeorm/empresa.orm-entity';
 import { TransferenciaOrmEntity } from '../src/infrastructure/persistence/typeorm/transferencia.orm-entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { subMonths, startOfMonth } from 'date-fns';
 
-config({ path: '.test.env' });
+if (!process.env.CI) {
+  config({ path: path.resolve(__dirname, '../.test.env') });
+}
 
 const testDataSource = new DataSource({
   type: 'postgres',
