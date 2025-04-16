@@ -43,10 +43,7 @@ async function seed() {
   const empresa = empresaRepo.create({
     cuit: faker.number.int({ min: 10000000000, max: 99999999999 }).toString(),
     razonSocial: 'Empresa Test',
-    fechaAdhesion: faker.date.between({
-      from: lastMonthStart,
-      to: lastMonthEnd,
-    }),
+    fechaAdhesion: new Date(lastMonthStart.getTime() + 3 * 24 * 60 * 60 * 1000),
   });
 
   await empresaRepo.save(empresa);
