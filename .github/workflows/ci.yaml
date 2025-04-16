@@ -45,15 +45,6 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: 🔍 Verificar resolución DNS del servicio postgres
-        run: |
-          echo "Resolviendo postgres..."
-          getent hosts postgres || (echo "No se pudo resolver 'postgres'" && exit 1)
-
-      - name: ⏳ Esperar a que Postgres esté listo con wait-on
-        run: |
-          npx wait-on tcp:postgres:5432 || (echo "❌ Timeout esperando Postgres" && exit 1)
-
       - name: 🌱 Seed test database
         run: npm run seed:test
 
