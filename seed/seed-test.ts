@@ -43,7 +43,16 @@ async function seed() {
   const empresa = empresaRepo.create({
     cuit: faker.number.int({ min: 10000000000, max: 99999999999 }).toString(),
     razonSocial: 'Empresa Test',
-    fechaAdhesion: new Date(lastMonthStart.getTime() + 3 * 24 * 60 * 60 * 1000),
+    fechaAdhesion: new Date(
+      Date.UTC(
+        lastMonthStart.getUTCFullYear(),
+        lastMonthStart.getUTCMonth(),
+        4, // día 4 del mes anterior
+        12,
+        0,
+        0,
+      ),
+    ),
   });
 
   await empresaRepo.save(empresa);
@@ -56,8 +65,14 @@ async function seed() {
     cuentaCredito: faker.finance.accountNumber(),
     importe: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
     fecha: new Date(
-      startOfMonth(subMonths(new Date(), 1)).getTime() +
-        3 * 24 * 60 * 60 * 1000,
+      Date.UTC(
+        lastMonthStart.getUTCFullYear(),
+        lastMonthStart.getUTCMonth(),
+        4, // día 4 del mes anterior
+        12,
+        0,
+        0,
+      ),
     ),
   });
 
