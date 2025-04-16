@@ -59,8 +59,7 @@ src/
 
 ## ✅ Testing
 
-- `npm run test` → unitarios + e2e
-- `npm run test:unit`
+- `npm run test` → unitarios
 - `npm run test:e2e`
 - `npm run test:cov` → cobertura total
 
