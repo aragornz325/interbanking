@@ -108,6 +108,10 @@ async function seed() {
   await transferenciaRepo.save(transferencia);
 
   console.log('[SEED-TEST] Datos de prueba insertados correctamente');
+
+  // 💤 Sleep preventivo para que PostgreSQL termine de procesar todo
+await new Promise((res) => setTimeout(res, 1000));
+
   await AppDataSource.destroy();
 }
 
