@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { EmpresaOrmEntity } from 'src/infrastructure/persistence/typeorm/empresa.orm-entity';
-import { TransferenciaOrmEntity } from 'src/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import { EmpresaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
+import { TransferenciaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
 import {
   DB_HOST,
   DB_NAME,

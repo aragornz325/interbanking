@@ -2,10 +2,10 @@ import { Injectable, Inject } from '@nestjs/common';
 import {
   EmpresaRepository,
   EMPRESA_REPOSITORY,
-} from 'src/core/domain/empresa.repository';
-import { Empresa } from 'src/core/domain/empresa.entity';
+} from 'src/modules/empresa/domain/empresa.repository';
+import { Empresa } from 'src/modules/empresa/domain/empresa.entity';
 import { BaseService } from 'src/shared/utils/perform-service-operation';
-import { Transferencia } from 'src/core/domain/transferencia.entity';
+import { Transferencia } from 'src/modules/empresa/domain/transferencia.entity';
 
 @Injectable()
 export class ListarEmpresasConTransferenciasUltimoMesUseCase extends BaseService {

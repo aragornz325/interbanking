@@ -1,31 +1,48 @@
 # Interbanking Challenge · Backend
 
-Este repositorio contiene la solución al challenge técnico para el puesto de desarrollador backend en Interbanking.
+[![CI](https://github.com/aragornz325/interbanking/actions/workflows/ci.yaml/badge.svg)](https://github.com/aragornz325/interbanking/actions/workflows/ci.yaml)
+
+
+Este repositorio contiene la solución al challenge técnico para el puesto de **Desarrollador Backend** en **Interbanking**.
+
+---
 
 ## 🧠 Stack Tecnológico
 
-- **Node.js** con **NestJS** (Typescript)
-- **PostgreSQL** con TypeORM
-- **Arquitectura Hexagonal**
-- **Jest** para testing (unitarios + e2e)
+- **Node.js** con **NestJS** (`v10+`) en **TypeScript**
+- **Arquitectura Hexagonal** y modularizada
+- **PostgreSQL** con **TypeORM**
 - **Swagger** para documentación
-- **Docker Compose** (opcional para local)
-- Validación de datos (`class-validator`)
-- Rate limiting (`@nestjs/throttler`)
-- Logs de auditoría
-- Manejo estructurado de errores
+- **Docker Compose** para entorno local (opcional)
+- **Validación y DTOs** con `class-validator`
+- **Rate limiting** con `@nestjs/throttler`
+- **Logs de auditoría**
+- **Manejo estructurado de errores**
+- **Testing completo:** Unitarios + E2E (Jest)
+- **CI automatizado con GitHub Actions**
 
-## 📁 Estructura
+---
+
+## 📁 Estructura del Proyecto
 
 ```
 src/
-├── application/           ← Casos de uso (business logic)
-├── core/                  ← Entidades, repositorios (puertos)
-├── infrastructure/        ← Adaptadores (TypeORM)
-├── presentation/          ← Controladores, DTOs
-├── shared/                ← Utilidades, excepciones, logs
-├── main.ts                ← Bootstrap de NestJS
+├── app.module.ts            ← Módulo raíz
+├── main.ts                  ← Bootstrap de NestJS
+├── core/                    ← Middlewares, guards, throttling, valores comunes
+├── modules/
+│   ├── empresa/             ← Dominio + Casos de Uso + Infra + Presentación
+│   │   ├── application/
+│   │   ├── domain/
+│   │   ├── infrastructure/
+│   │   └── presentation/
+│   └── database/            ← Configuración DB y TypeORM
+├── shared/                  ← Utils, logs, excepciones y contratos compartidos
 ```
+
+> Cada feature tiene su propio módulo, lo que permite escalar fácilmente agregando nuevos dominios (`cliente`, `usuarios`, etc).
+
+---
 
 ## 📌 Endpoints
 
@@ -38,24 +55,23 @@ src/
 - `POST /api/empresas`  
   Crear una nueva empresa
 
-## 🔐 Seguridad y Calidad
-
-- Validaciones de DTO
-- Lógica de errores personalizada (`ErrorManager`)
-- Rate limiting global (`5 reqs / minuto`)
-- Middleware de logs de auditoría
-- Cobertura de tests >90% (`npm run test:cov`)
+---
 
 ## ✅ Testing
 
-- `npm run test` → unitarios + e2e
-- `npm run test:unit`
+- `npm run test` → unitarios
 - `npm run test:e2e`
-- `npm run test:cov`
+- `npm run test:cov` → cobertura total
+
+Los tests unitarios están basados en mocks del dominio (`EmpresaRepository`), los E2E interactúan con la base real (entorno `test`).
+
+- 📊 **Cobertura Total Aproximada**: 90%
+
+---
 
 ## 🧪 Seed para test
 
-Antes de correr los tests e2e:
+Antes de correr los tests E2E:
 
 ```bash
 npm run seed:test
@@ -63,22 +79,63 @@ npm run seed:test
 
 Esto pobla la DB de test con una empresa de CUIT `20111111111` y una transferencia asociada.
 
+> Ver [seed-test.ts](./seed/seed-test.ts)
+
+---
+
 ## ⚙️ Variables de entorno
 
-`.dev.env` y `.test.env` incluidos como ejemplo. Se cargan con `@nestjs/config`.
+Incluidos:
 
-## 📝 Notas de la prueba
+- `.dev.env`
+- `.test.env`
 
-Ver [`NOTAS.md`](./NOTAS.md)
+Se cargan automáticamente según `NODE_ENV` usando `@nestjs/config`.
+
+---
 
 ## 🚀 Swagger
 
 Una vez iniciado:
 
-```
-http://localhost:3000/docs
-```
+[http://localhost:3000/docs](http://localhost:3000/docs)
 
 ---
 
-_Desarrollado por Rodrigo Quintero 🛡️_
+## 🔄 Integración Continua (CI)
+
+El pipeline de CI incluye:
+
+- Levantamiento de PostgreSQL (`interbanking_test`)
+- Carga de seed de test
+- Ejecución de:
+  - Tests unitarios
+  - Tests E2E
+  - Reporte de cobertura
+
+Archivo: `.github/workflows/ci.yaml`
+
+![CI](https://github.com/tu-usuario/interbanking-challenge/actions/workflows/ci.yaml/badge.svg)
+
+---
+
+## 🐳 Docker / Local Run
+
+```bash
+docker-compose up --build
+```
+
+> Esto levanta la base de datos y la aplicación backend en modo desarrollo (`.dev.env`).
+
+---
+
+## 🧠 Notas y Decisiones Técnicas
+
+Se puede encontrar una explicación detallada de supuestos, decisiones y estrategias aplicadas en el archivo [`NOTAS.md`](./NOTAS.md).
+
+---
+
+_Desarrollado por Rodrigo Quintero 🛡️_  
+**Fecha de entrega:** 16/04/2025
+
+Gracias por la oportunidad.

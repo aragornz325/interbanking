@@ -2,10 +2,11 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import path from 'path';
-import { EmpresaOrmEntity } from '../src/infrastructure/persistence/typeorm/empresa.orm-entity';
-import { TransferenciaOrmEntity } from '../src/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import { EmpresaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
+import { TransferenciaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { subMonths, startOfMonth } from 'date-fns';
+import { subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import { faker } from '@faker-js/faker';
 
 if (!process.env.CI) {
   config({ path: path.resolve(__dirname, '../.test.env') });
@@ -34,6 +35,20 @@ async function seedTestData() {
 
   await transferenciaRepo.delete({});
   await empresaRepo.delete({});
+
+  const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
+  const lastMonthEnd = endOfMonth(subMonths(new Date(), 1));
+
+  // Agregar una empresa fija en el mes anterior
+  const empresaAdhesion = empresaRepo.create({
+    cuit: '20112223334',
+    razonSocial: 'Empresa Test Adhesión',
+    fechaAdhesion: faker.date.between({
+      from: lastMonthStart,
+      to: lastMonthEnd,
+    }),
+  });
+  await empresaRepo.save(empresaAdhesion);
 
   const empresa = empresaRepo.create({
     id: '00000000-0000-0000-0000-000000000001',

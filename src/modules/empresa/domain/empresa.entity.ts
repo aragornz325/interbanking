@@ -23,4 +23,10 @@ export class Empresa {
     public readonly razonSocial: string,
     public readonly fechaAdhesion: Date,
   ) {}
+
+  static createWithoutId(cuit: string, razon: string, fecha: Date) {
+    const empresa = new Empresa('fake', cuit, razon, fecha);
+    delete (empresa as any).id;
+    return empresa;
+  }
 }

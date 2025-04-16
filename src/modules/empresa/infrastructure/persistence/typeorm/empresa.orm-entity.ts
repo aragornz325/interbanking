@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 
 /**
  * Entidad ORM: EmpresaOrmEntity
@@ -22,6 +22,7 @@ export class EmpresaOrmEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Index()
   @Column({ unique: true })
   cuit!: string;
 

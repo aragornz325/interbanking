@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CrearEmpresaUseCase debe hacer snapshot del resultado 1`] = `
+Empresa {
+  "cuit": "20304050607",
+  "fechaAdhesion": 2024-01-01T00:00:00.000Z,
+  "id": "uuid-1234",
+  "razonSocial": "UNSC Spartan Ops",
+}
+`;

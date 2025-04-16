@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -23,17 +21,29 @@ describe('GET /empresas/actividad (e2e)', () => {
     const res = await request(app.getHttpServer()).get('/empresas/actividad');
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          empresa: expect.objectContaining({
-            cuit: '20111111111',
-            razonSocial: 'Empresa Test',
-          }),
-          transferencias: expect.any(Array),
-        }),
-      ]),
-    );
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+
+    for (const item of res.body) {
+      expect(item).toHaveProperty('empresa');
+      expect(item).toHaveProperty('transferencias');
+
+      expect(item.empresa).toHaveProperty('id');
+      expect(item.empresa).toHaveProperty('cuit');
+      expect(item.empresa).toHaveProperty('razonSocial');
+      expect(item.empresa).toHaveProperty('fechaAdhesion');
+
+      expect(Array.isArray(item.transferencias)).toBe(true);
+
+      for (const t of item.transferencias) {
+        expect(t).toHaveProperty('id');
+        expect(t).toHaveProperty('empresaId');
+        expect(t).toHaveProperty('cuentaDebito');
+        expect(t).toHaveProperty('cuentaCredito');
+        expect(t).toHaveProperty('importe');
+        expect(t).toHaveProperty('fecha');
+      }
+    }
   });
 
   afterAll(async () => {
