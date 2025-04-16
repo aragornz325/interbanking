@@ -58,7 +58,10 @@ async function seed() {
     cuentaDebito: faker.finance.accountNumber(),
     cuentaCredito: faker.finance.accountNumber(),
     importe: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
-    fecha: faker.date.between({ from: lastMonthStart, to: lastMonthEnd }),
+    fecha: new Date(
+      startOfMonth(subMonths(new Date(), 1)).getTime() +
+        3 * 24 * 60 * 60 * 1000,
+    ),
   });
 
   await transferenciaRepo.save(transferencia);
