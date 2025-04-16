@@ -3,8 +3,8 @@ import { DataSource } from 'typeorm';
 import { faker } from '@faker-js/faker';
 import { config } from 'dotenv';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { EmpresaOrmEntity } from '../src/infrastructure/persistence/typeorm/empresa.orm-entity';
-import { TransferenciaOrmEntity } from '../src/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import { EmpresaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
+import { TransferenciaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
 
 const envArg = process.argv[2] || 'dev';
 const envFile = `.${envArg}.env`;

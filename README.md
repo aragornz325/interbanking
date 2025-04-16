@@ -1,5 +1,8 @@
 # Interbanking Challenge · Backend
 
+[![CI](https://github.com/aragornz325/interbanking/actions/workflows/ci.yaml/badge.svg)](https://github.com/aragornz325/interbanking/actions/workflows/ci.yaml)
+
+
 Este repositorio contiene la solución al challenge técnico para el puesto de **Desarrollador Backend** en **Interbanking**.
 
 ---
@@ -16,6 +19,7 @@ Este repositorio contiene la solución al challenge técnico para el puesto de *
 - **Logs de auditoría**
 - **Manejo estructurado de errores**
 - **Testing completo:** Unitarios + E2E (Jest)
+- **CI automatizado con GitHub Actions**
 
 ---
 
@@ -62,6 +66,8 @@ src/
 
 Los tests unitarios están basados en mocks del dominio (`EmpresaRepository`), los E2E interactúan con la base real (entorno `test`).
 
+- 📊 **Cobertura Total Aproximada**: 90%
+
 ---
 
 ## 🧪 Seed para test
@@ -73,6 +79,8 @@ npm run seed:test
 ```
 
 Esto pobla la DB de test con una empresa de CUIT `20111111111` y una transferencia asociada.
+
+> Ver [seed-test.ts](./seed/seed-test.ts)
 
 ---
 
@@ -91,15 +99,40 @@ Se cargan automáticamente según `NODE_ENV` usando `@nestjs/config`.
 
 Una vez iniciado:
 
-```
-http://localhost:3000/docs
-```
+[http://localhost:3000/docs](http://localhost:3000/docs)
 
 ---
 
-## 📝 Notas de la prueba
+## 🔄 Integración Continua (CI)
 
-Ver [`NOTAS.md`](./NOTAS.md) para aclaraciones, supuestos y decisiones de diseño.
+El pipeline de CI incluye:
+
+- Levantamiento de PostgreSQL (`interbanking_test`)
+- Carga de seed de test
+- Ejecución de:
+  - Tests unitarios
+  - Tests E2E
+  - Reporte de cobertura
+
+Archivo: `.github/workflows/ci.yaml`
+
+![CI](https://github.com/tu-usuario/interbanking-challenge/actions/workflows/ci.yaml/badge.svg)
+
+---
+
+## 🐳 Docker / Local Run
+
+```bash
+docker-compose up --build
+```
+
+> Esto levanta la base de datos y la aplicación backend en modo desarrollo (`.dev.env`).
+
+---
+
+## 🧠 Notas y Decisiones Técnicas
+
+Se puede encontrar una explicación detallada de supuestos, decisiones y estrategias aplicadas en el archivo [`NOTAS.md`](./NOTAS.md).
 
 ---
 
