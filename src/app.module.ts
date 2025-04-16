@@ -1,52 +1,52 @@
+// Nest core
 import {
   MiddlewareConsumer,
   Module,
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TransferenciaOrmEntity } from './infrastructure/persistence/typeorm/transferencia.orm-entity';
-import { EmpresaOrmEntity } from './infrastructure/persistence/typeorm/empresa.orm-entity';
-import { EmpresaRepositoryImpl } from './infrastructure/persistence/typeorm/empresa.repository.impl';
-import { CrearEmpresaUseCase } from './application/use-cases/crear-empresa.use-case';
-import { ListarEmpresasConTransferenciasUltimoMesUseCase } from './application/use-cases/listar-transferencias.use-case';
-import { ListarEmpresasAdheridasUltimoMesUseCase } from './application/use-cases/listar-adhesiones.use-case';
-import { EMPRESA_REPOSITORY } from './core/domain/empresa.repository';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getTypeOrmConfig } from './core/config/orm.dataSource';
-import { EmpresaController } from './presentation/controllers/empresa.controller';
-import { LoggerMiddleware } from './core/middlewares/audit';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { throttlerConfig } from './core/config/throttle.config';
 import { APP_GUARD } from '@nestjs/core';
+
+// Nest modules
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
+
+// Config / Middleware / Guards
+import { getTypeOrmConfig } from './core/config/orm.dataSource';
+import { throttlerConfig } from './core/config/throttle.config';
+import { LoggerMiddleware } from './core/middlewares/audit';
 import { CustomThrottlerGuard } from './core/guards/custom-throttler.guard';
+
+// Domain / Application
+import { EMPRESA_REPOSITORY } from './core/domain/empresa.repository';
+import { useCases } from './application';
+
+// ORM Entities
+import { ormEntities } from './infrastructure/persistence';
+
+// Presentation
+import { EmpresaController } from './presentation/controllers/empresa.controller';
+import { EmpresaRepositoryImpl } from './infrastructure/persistence/typeorm/empresa.repository.impl';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot(throttlerConfig),
     ConfigModule.forRoot({
-      envFilePath: `.${process.env.NODE_ENV}.env`,
+      envFilePath: [`.${process.env.NODE_ENV}.env`, '.env'],
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: getTypeOrmConfig,
     }),
-    TypeOrmModule.forFeature([EmpresaOrmEntity, TransferenciaOrmEntity]),
+    TypeOrmModule.forFeature(ormEntities),
   ],
   controllers: [EmpresaController],
   providers: [
-    {
-      provide: EMPRESA_REPOSITORY,
-      useClass: EmpresaRepositoryImpl,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: CustomThrottlerGuard,
-    },
-    CrearEmpresaUseCase,
-    ListarEmpresasConTransferenciasUltimoMesUseCase,
-    ListarEmpresasAdheridasUltimoMesUseCase,
+    { provide: EMPRESA_REPOSITORY, useClass: EmpresaRepositoryImpl },
+    { provide: APP_GUARD, useClass: CustomThrottlerGuard },
+    ...useCases,
   ],
 })
 export class AppModule implements NestModule {

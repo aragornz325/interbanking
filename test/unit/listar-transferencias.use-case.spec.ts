@@ -3,10 +3,18 @@ import { ListarEmpresasConTransferenciasUltimoMesUseCase } from '../../src/appli
 import { Empresa } from '../../src/core/domain/empresa.entity';
 import { Transferencia } from '../../src/core/domain/transferencia.entity';
 import { EmpresaRepository } from '../../src/core/domain/empresa.repository';
+import { Logger } from '@nestjs/common';
 
 describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
   let useCase: ListarEmpresasConTransferenciasUltimoMesUseCase;
   let mockRepo: jest.Mocked<EmpresaRepository>;
+
+  const loggerSpy = jest
+    .spyOn(Logger.prototype, 'log')
+    .mockImplementation(() => {});
+  const errorSpy = jest
+    .spyOn(Logger.prototype, 'error')
+    .mockImplementation(() => {});
 
   beforeEach(() => {
     mockRepo = {
@@ -16,6 +24,10 @@ describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
     };
 
     useCase = new ListarEmpresasConTransferenciasUltimoMesUseCase(mockRepo);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('debería devolver empresas con transferencias del último mes', async () => {
@@ -48,6 +60,30 @@ describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
     expect(resultado).toEqual(mockResultado);
     expect(
       mockRepo.listarEmpresasConTransferenciasUltimoMes,
-    ).toHaveBeenCalled();
+    ).toHaveBeenCalledTimes(1);
+    expect(loggerSpy).toHaveBeenCalledWith(
+      expect.stringContaining('listar empresas con transferencias'),
+    );
+  });
+
+  it('debería retornar un array vacío si no hay transferencias registradas', async () => {
+    mockRepo.listarEmpresasConTransferenciasUltimoMes.mockResolvedValue([]);
+
+    const resultado = await useCase.execute();
+
+    expect(resultado).toEqual([]);
+    expect(
+      mockRepo.listarEmpresasConTransferenciasUltimoMes,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  it('debería manejar errores lanzados por el repositorio', async () => {
+    const error = new Error('Fallo en DB');
+    mockRepo.listarEmpresasConTransferenciasUltimoMes.mockRejectedValueOnce(
+      error,
+    );
+
+    await expect(useCase.execute()).rejects.toThrow('Fallo en DB');
+    expect(errorSpy).toHaveBeenCalled();
   });
 });

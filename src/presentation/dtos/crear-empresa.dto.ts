@@ -27,8 +27,9 @@ export class CrearEmpresaDto implements ICrearEmpresa {
   })
   @IsNotEmpty()
   @IsString()
-  @Length(11, 11, { message: 'El CUIT debe tener 11 dígitos' })
-  @Matches(/^[0-9]+$/, { message: 'El CUIT debe ser numérico' })
+  @Matches(/^[0-9]{11}$/, {
+    message: 'El CUIT debe tener 11 dígitos numéricos',
+  })
   cuit!: string;
 
   @ApiProperty({

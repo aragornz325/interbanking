@@ -82,3 +82,8 @@ http://localhost:3000/docs
 ---
 
 _Desarrollado por Rodrigo Quintero 🛡️_
+
+## 📅 Fecha de entrega
+
+Prueba técnica entregada el **16/04/2025**  
+Gracias por la oportunidad.
