@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { ListarEmpresasConTransferenciasUltimoMesUseCase } from '../../src/application/use-cases/listar-transferencias.use-case';
-import { Empresa } from '../../src/core/domain/empresa.entity';
-import { Transferencia } from '../../src/core/domain/transferencia.entity';
-import { EmpresaRepository } from '../../src/core/domain/empresa.repository';
+import { ListarEmpresasConTransferenciasUltimoMesUseCase } from '../../src/modules/empresa/application/use-cases/listar-transferencias.use-case';
+import { Empresa } from '../../src/modules/empresa/domain/empresa.entity';
+import { Transferencia } from '../../src/modules/empresa/domain/transferencia.entity';
+import { EmpresaRepository } from '../../src/modules/empresa/domain/empresa.repository';
 import { Logger } from '@nestjs/common';
 
 describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {

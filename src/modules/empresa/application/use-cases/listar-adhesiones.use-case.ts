@@ -2,8 +2,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import {
   EmpresaRepository,
   EMPRESA_REPOSITORY,
-} from 'src/core/domain/empresa.repository';
-import { Empresa } from 'src/core/domain/empresa.entity';
+} from 'src/modules/empresa/domain/empresa.repository';
+import { Empresa } from 'src/modules/empresa/domain/empresa.entity';
 import { BaseService } from 'src/shared/utils/perform-service-operation';
 
 @Injectable()

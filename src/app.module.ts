@@ -1,4 +1,3 @@
-// Nest core
 import {
   MiddlewareConsumer,
   Module,
@@ -7,50 +6,43 @@ import {
 } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
-// Nest modules
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 
-// Config / Middleware / Guards
-import { getTypeOrmConfig } from './core/config/orm.dataSource';
-import { throttlerConfig } from './core/config/throttle.config';
+// Core
 import { LoggerMiddleware } from './core/middlewares/audit';
 import { CustomThrottlerGuard } from './core/guards/custom-throttler.guard';
 
-// Domain / Application
-import { EMPRESA_REPOSITORY } from './core/domain/empresa.repository';
-import { useCases } from './application';
+// Módulos propios
+import { EmpresaModule } from './modules/empresa/empresa.module';
 
-// ORM Entities
-import { ormEntities } from './infrastructure/persistence';
-
-// Presentation
-import { EmpresaController } from './presentation/controllers/empresa.controller';
-import { EmpresaRepositoryImpl } from './infrastructure/persistence/typeorm/empresa.repository.impl';
+// Config
+import { throttlerConfig } from './core/config/throttle.config';
+import { getTypeOrmConfig } from './modules/database/orm.dataSource';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot(throttlerConfig),
     ConfigModule.forRoot({
-      envFilePath: [`.${process.env.NODE_ENV}.env`, '.env'],
+      envFilePath: `.${process.env.NODE_ENV}.env`,
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: getTypeOrmConfig,
     }),
-    TypeOrmModule.forFeature(ormEntities),
+    EmpresaModule,
   ],
-  controllers: [EmpresaController],
   providers: [
-    { provide: EMPRESA_REPOSITORY, useClass: EmpresaRepositoryImpl },
-    { provide: APP_GUARD, useClass: CustomThrottlerGuard },
-    ...useCases,
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(LoggerMiddleware)
       .forRoutes({ path: '*path', method: RequestMethod.ALL });

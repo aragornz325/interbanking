@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CrearEmpresaUseCase } from 'src/application/use-cases/crear-empresa.use-case';
-import { ListarEmpresasAdheridasUltimoMesUseCase } from 'src/application/use-cases/listar-adhesiones.use-case';
-import { ListarEmpresasConTransferenciasUltimoMesUseCase } from 'src/application/use-cases/listar-transferencias.use-case';
+import { CrearEmpresaUseCase } from 'src/modules/empresa/application/use-cases/crear-empresa.use-case';
+import { ListarEmpresasAdheridasUltimoMesUseCase } from 'src/modules/empresa/application/use-cases/listar-adhesiones.use-case';
+import { ListarEmpresasConTransferenciasUltimoMesUseCase } from 'src/modules/empresa/application/use-cases/listar-transferencias.use-case';
 import { CrearEmpresaDto } from '../dtos/crear-empresa.dto';
 import { BaseController } from 'src/shared/utils/perform-controller-operation';
 import {

@@ -4,8 +4,8 @@
 import { Logger } from '@nestjs/common';
 
 // Domain / Application
-import { CrearEmpresaUseCase } from '../../src/application/use-cases/crear-empresa.use-case';
-import { Empresa } from '../../src/core/domain/empresa.entity';
+import { CrearEmpresaUseCase } from '../../src/modules/empresa/application/use-cases/crear-empresa.use-case';
+import { Empresa } from '../../src/modules/empresa/domain/empresa.entity';
 import { DuplicateResourceException } from 'src/shared/exceptions/custom.exceptions';
 
 describe('CrearEmpresaUseCase', () => {

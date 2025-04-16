@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
-import { EmpresaRepository } from 'src/core/domain/empresa.repository';
-import { Empresa } from 'src/core/domain/empresa.entity';
+import { EmpresaRepository } from 'src/modules/empresa/domain/empresa.repository';
+import { Empresa } from 'src/modules/empresa/domain/empresa.entity';
 import { EmpresaOrmEntity } from './empresa.orm-entity';
 import { TransferenciaOrmEntity } from './transferencia.orm-entity';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { Transferencia } from 'src/core/domain/transferencia.entity';
+import { Transferencia } from 'src/modules/empresa/domain/transferencia.entity';
 import { DataSource } from 'typeorm';
 import { EmpresaConTransferenciasRaw } from 'src/shared/interfaces/empresa-transferenciaRaw';
 import { BaseService } from 'src/shared/utils/perform-service-operation';
