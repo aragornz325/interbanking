@@ -13,16 +13,17 @@ jobs:
     services:
       postgres:
         image: postgres:15
-        ports: [5432:5432]
+        ports:
+          - 5432:5432
         env:
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: interbanking_test
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U admin"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     env:
       DB_HOST: postgres
@@ -44,8 +45,14 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: ⏳ Esperar a que Postgres esté listo
-        run: npx wait-on tcp:postgres:5432
+      - name: 🔍 Verificar resolución DNS del servicio postgres
+        run: |
+          echo "Resolviendo postgres..."
+          getent hosts postgres || (echo "No se pudo resolver 'postgres'" && exit 1)
+
+      - name: ⏳ Esperar a que Postgres esté listo con wait-on
+        run: |
+          npx wait-on tcp:postgres:5432 || (echo "❌ Timeout esperando Postgres" && exit 1)
 
       - name: 🌱 Seed test database
         run: npm run seed:test
