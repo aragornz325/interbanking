@@ -44,6 +44,9 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
+      - name: ⏳ Esperar a que Postgres esté listo
+        run: npx wait-on tcp:postgres:5432
+
       - name: 🌱 Seed test database
         run: npm run seed:test
 
