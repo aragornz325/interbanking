@@ -1,18 +1,18 @@
 import 'reflect-metadata';
-import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
-import path from 'path';
+import { DataSource } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { EmpresaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
 import { TransferenciaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { faker } from '@faker-js/faker';
+import { subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import path from 'path';
 
 if (!process.env.CI) {
   config({ path: path.resolve(__dirname, '../.test.env') });
 }
 
-const testDataSource = new DataSource({
+const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
   port: +process.env.DB_PORT!,
@@ -25,60 +25,49 @@ const testDataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
 });
 
-async function seedTestData() {
-  await testDataSource.initialize();
+async function seed() {
+  await AppDataSource.initialize();
+  console.log('[SEED-TEST] Conectado a la base de datos');
 
-  const empresaRepo = testDataSource.getRepository(EmpresaOrmEntity);
-  const transferenciaRepo = testDataSource.getRepository(
-    TransferenciaOrmEntity,
-  );
+  const empresaRepo = AppDataSource.getRepository(EmpresaOrmEntity);
+  const transferenciaRepo = AppDataSource.getRepository(TransferenciaOrmEntity);
 
+  // 🔥 Limpieza total para evitar duplicados
   await transferenciaRepo.delete({});
   await empresaRepo.delete({});
 
   const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
   const lastMonthEnd = endOfMonth(subMonths(new Date(), 1));
 
-  // Agregar una empresa fija en el mes anterior
-  const empresaAdhesion = empresaRepo.create({
-    cuit: '20112223334',
-    razonSocial: 'Empresa Test Adhesión',
+  // ✅ Empresa adherida el mes pasado
+  const empresa = empresaRepo.create({
+    cuit: faker.number.int({ min: 10000000000, max: 99999999999 }).toString(),
+    razonSocial: 'Empresa Test',
     fechaAdhesion: faker.date.between({
       from: lastMonthStart,
       to: lastMonthEnd,
     }),
   });
-  await empresaRepo.save(empresaAdhesion);
-
-  const empresa = empresaRepo.create({
-    id: '00000000-0000-0000-0000-000000000001',
-    cuit: '20111111111',
-    razonSocial: 'Empresa Test',
-    fechaAdhesion: new Date('2024-03-15T00:00:00Z'),
-  });
 
   await empresaRepo.save(empresa);
-  const fechaValidaDinamica = new Date(
-    startOfMonth(subMonths(new Date(), 1)).getTime() + 5 * 24 * 60 * 60 * 1000,
-  );
 
+  // ✅ Transferencia con fecha válida
   const transferencia = transferenciaRepo.create({
-    id: '00000000-0000-0000-0000-000000000100',
     empresa,
     empresaId: empresa.id,
-    importe: 5000.5,
-    cuentaDebito: '12345678',
-    cuentaCredito: '87654321',
-    fecha: fechaValidaDinamica,
+    cuentaDebito: faker.finance.accountNumber(),
+    cuentaCredito: faker.finance.accountNumber(),
+    importe: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
+    fecha: faker.date.between({ from: lastMonthStart, to: lastMonthEnd }),
   });
 
   await transferenciaRepo.save(transferencia);
 
-  console.log('[SEED-TEST] Datos de prueba insertados');
-  await testDataSource.destroy();
+  console.log('[SEED-TEST] Datos de prueba insertados correctamente');
+  await AppDataSource.destroy();
 }
 
-seedTestData().catch((err) => {
+seed().catch((err) => {
   console.error('[SEED-TEST] Error:', err);
   process.exit(1);
 });
