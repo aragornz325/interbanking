@@ -5,12 +5,14 @@ import { config } from 'dotenv';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { EmpresaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
 import { TransferenciaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import { Logger } from '@nestjs/common';
 
 const envArg = process.argv[2] || 'dev';
 const envFile = `.${envArg}.env`;
 
 config({ path: envFile });
 
+const logger = new Logger('Seed');
 const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
@@ -26,7 +28,7 @@ const AppDataSource = new DataSource({
 
 async function seed() {
   await AppDataSource.initialize();
-  console.log(`[SEED] Conectado a la base de datos (${envArg})`);
+  logger.debug(`[SEED] Conectado a la base de datos (${envArg})`);
 
   const empresaRepo = AppDataSource.getRepository(EmpresaOrmEntity);
   const transferenciaRepo = AppDataSource.getRepository(TransferenciaOrmEntity);
@@ -35,7 +37,7 @@ async function seed() {
   const totalTransferencias = await transferenciaRepo.count();
 
   if (totalEmpresas > 9 || totalTransferencias > 12) {
-    console.log(
+    logger.debug(
       '[SEED] Datos ya existentes. No se insertarán nuevos registros.',
     );
     await AppDataSource.destroy();

@@ -22,6 +22,11 @@
     "esModuleInterop": true,
     "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "test/throttle.test.js"],
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "test/throttle.test.js",
+    "seed/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }
