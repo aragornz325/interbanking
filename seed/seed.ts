@@ -26,9 +26,9 @@ const AppDataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
 });
 
-async function seed() {
+async function seed({ logger }: { logger: Logger }) {
   await AppDataSource.initialize();
-  logger.debug(`[SEED] Conectado a la base de datos (${envArg})`);
+  logger.debug(`Conectado a la base de datos (${envArg})`);
 
   const empresaRepo = AppDataSource.getRepository(EmpresaOrmEntity);
   const transferenciaRepo = AppDataSource.getRepository(TransferenciaOrmEntity);
@@ -37,9 +37,7 @@ async function seed() {
   const totalTransferencias = await transferenciaRepo.count();
 
   if (totalEmpresas > 9 || totalTransferencias > 12) {
-    logger.debug(
-      '[SEED] Datos ya existentes. No se insertarán nuevos registros.',
-    );
+    logger.debug('Datos ya existentes. No se insertarán nuevos registros.');
     await AppDataSource.destroy();
     return;
   }
@@ -52,7 +50,7 @@ async function seed() {
     }),
   );
   await empresaRepo.save(empresas);
-  console.log(`[SEED] Insertadas ${empresas.length} empresas`);
+  logger.debug(` Insertadas ${empresas.length} empresas`);
 
   const transferencias = Array.from({ length: 20 }).map(() => {
     const empresa = faker.helpers.arrayElement(empresas);
@@ -67,13 +65,15 @@ async function seed() {
   });
 
   await transferenciaRepo.save(transferencias);
-  console.log(`[SEED] Insertadas ${transferencias.length} transferencias`);
+  logger.debug(` Insertadas ${transferencias.length} transferencias`);
 
   await AppDataSource.destroy();
-  console.log('[SEED] Completado y conexión cerrada');
+  logger.debug(' Completado y conexión cerrada');
 }
 
-seed().catch((err) => {
-  console.error('[SEED] Error:', err);
+seed({
+  logger: logger,
+}).catch((err) => {
+  logger.error(' Error:', err);
   process.exit(1);
 });
