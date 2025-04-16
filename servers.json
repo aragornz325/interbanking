@@ -1,0 +1,24 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "interBanking Test (Docker)",
+            "Group": "Docker",
+            "Host": "postgres_test_db",
+            "Port": 5432,
+            "MaintenanceDB": "interbanking_test",
+            "Username": "admin",
+            "Password": "postgres",
+            "SSLMode": "prefer"
+        },
+        "2": {
+            "Name": "interBanking (Docker)",
+            "Group": "Docker",
+            "Host": "postgres_dev_db",
+            "Port": 5432,
+            "MaintenanceDB": "interbanking_dev",
+            "Username": "admin",
+            "Password": "postgres",
+            "SSLMode": "prefer"
+        }
+    }
+}
