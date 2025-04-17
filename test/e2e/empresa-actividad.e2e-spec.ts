@@ -2,28 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import request from 'supertest';
-import { z } from 'zod';
 
-const EmpresaActividadSchema = z.array(
-  z.object({
-    empresa: z.object({
-      id: z.string(),
-      cuit: z.string(),
-      razonSocial: z.string(),
-      fechaAdhesion: z.string(),
-    }),
-    transferencias: z.array(
-      z.object({
-        id: z.string(),
-        empresaId: z.string(),
-        cuentaDebito: z.string(),
-        cuentaCredito: z.string(),
-        importe: z.number(),
-        fecha: z.string(),
-      }),
-    ),
-  }),
-);
+import { errorSpy, loggerSpy } from '../utils/logger-spy';
+import { EmpresaActividadSchema } from './schemas/empresa-actividad.schema';
 
 describe('GET /empresas/actividad (e2e)', () => {
   let app: INestApplication;
@@ -40,13 +21,20 @@ describe('GET /empresas/actividad (e2e)', () => {
   });
 
   it('debería devolver empresas con transferencias en el último mes', async () => {
-    console.log('[TEST] Consultando /empresas/actividad...');
+    loggerSpy('Consultando /empresas/actividad...', 'GET /empresas/actividad');
+
     const res = await request(app.getHttpServer()).get('/empresas/actividad');
 
     expect(res.status).toBe(200);
+    loggerSpy('Respuesta recibida correctamente.', 'GET /empresas/actividad');
 
     const data = EmpresaActividadSchema.parse(res.body);
     const empresas = data.map((e) => e.empresa.razonSocial);
+
+    loggerSpy(
+      `Empresas encontradas: ${empresas.join(', ')}`,
+      'GET /empresas/actividad',
+    );
 
     expect(empresas).toContain('Acme Corp');
     expect(empresas).toContain('Wayne Enterprises');
@@ -71,9 +59,35 @@ describe('GET /empresas/actividad (e2e)', () => {
         expect(t).toHaveProperty('fecha');
       }
     }
+
+    loggerSpy('Validaciones finalizadas con éxito.', 'GET /empresas/actividad');
+  });
+
+  it('debería manejar errores si la ruta falla', async () => {
+    loggerSpy('Consultando /ruta-inexistente...', 'GET /empresas/actividad');
+
+    const res = await request(app.getHttpServer()).get('/ruta-inexistente');
+
+    if (res.status !== 404) {
+      errorSpy(
+        'La ruta debería haber fallado con 404, pero devolvió otro código',
+        undefined,
+        'GET /empresas/actividad',
+      );
+    }
+
+    expect(res.status).toBe(404);
+    loggerSpy(
+      'Error correctamente detectado: ruta no encontrada',
+      'GET /empresas/actividad',
+    );
   });
 
   afterAll(async () => {
     await app.close();
+    loggerSpy(
+      'Aplicación cerrada después de los tests.',
+      'GET /empresas/actividad',
+    );
   });
 });
