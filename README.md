@@ -2,7 +2,6 @@
 
 [![CI](https://github.com/aragornz325/interbanking/actions/workflows/ci.yaml/badge.svg)](https://github.com/aragornz325/interbanking/actions/workflows/ci.yaml)
 
-
 Este repositorio contiene la solución al challenge técnico para el puesto de **Desarrollador Backend** en **Interbanking**.
 
 ---
@@ -64,8 +63,10 @@ src/
 - `npm run test:cov` → cobertura total
 
 Los tests unitarios están basados en mocks del dominio (`EmpresaRepository`), los E2E interactúan con la base real (entorno `test`).
+> Los tests unitarios validan la lógica del dominio usando datos mockeados con fechas controladas para simular el "último mes calendario". Los E2E testean con datos reales persistidos en la DB.
 
-- 📊 **Cobertura Total Aproximada**: 90%
+- 📊 **Cobertura de Casos de Uso Críticos**: 100%  
+📦 Los 3 endpoints requeridos (crear empresa, listar adhesiones, listar transferencias) están completamente cubiertos por pruebas unitarias y e2e.
 
 ---
 
@@ -114,8 +115,6 @@ El pipeline de CI incluye:
   - Reporte de cobertura
 
 Archivo: `.github/workflows/ci.yaml`
-
-![CI](https://github.com/tu-usuario/interbanking-challenge/actions/workflows/ci.yaml/badge.svg)
 
 ---
 

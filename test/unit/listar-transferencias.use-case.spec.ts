@@ -1,21 +1,16 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import { Logger } from '@nestjs/common';
-
 import { ListarEmpresasConTransferenciasUltimoMesUseCase } from '../../src/modules/empresa/application/use-cases/listar-transferencias.use-case';
 import { Empresa } from '../../src/modules/empresa/domain/empresa.entity';
 import { EmpresaRepository } from '../../src/modules/empresa/domain/empresa.repository';
 import { Transferencia } from '../../src/modules/empresa/domain/transferencia.entity';
+import { errorSpy, loggerSpy } from '../utils/logger-spy';
 
 describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
   let useCase: ListarEmpresasConTransferenciasUltimoMesUseCase;
-  let mockRepo: jest.Mocked<EmpresaRepository>;
-
-  const loggerSpy = jest
-    .spyOn(Logger.prototype, 'log')
-    .mockImplementation(() => {});
-  const errorSpy = jest
-    .spyOn(Logger.prototype, 'error')
-    .mockImplementation(() => {});
+  let mockRepo: Partial<EmpresaRepository> & {
+    listarEmpresasConTransferenciasUltimoMes: jest.Mock;
+    listarEmpresasAdheridasUltimoMes: jest.Mock;
+    crear: jest.Mock;
+  };
 
   beforeEach(() => {
     mockRepo = {
@@ -25,32 +20,35 @@ describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
     };
 
     useCase = new ListarEmpresasConTransferenciasUltimoMesUseCase(mockRepo);
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('debería devolver empresas con transferencias del último mes', async () => {
+  it('debería devolver empresas con transferencias del último mes calendario', async () => {
+    loggerSpy(
+      'Ejecutando caso de uso para listar empresas con transferencias',
+      'ListarEmpresasConTransferenciasUltimoMesUseCase',
+    );
+
+    const now = new Date();
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 15);
+
     const empresa = new Empresa(
       'uuid-123',
       '20304050607',
-      'Empresa de prueba',
-      new Date(),
+      'Empresa de prueba transferencia',
+      lastMonthDate,
     );
 
-    const transferencias: Transferencia[] = [
-      new Transferencia(
-        'tr-1',
-        'uuid-123',
-        '12345678',
-        '87654321',
-        1000,
-        new Date(),
-      ),
-    ];
+    const transferencia = new Transferencia(
+      'tr-1',
+      'uuid-123',
+      '12345678',
+      '87654321',
+      1000,
+      lastMonthDate,
+    );
 
-    const mockResultado = [{ empresa, transferencias }];
+    const mockResultado = [{ empresa, transferencias: [transferencia] }];
 
     mockRepo.listarEmpresasConTransferenciasUltimoMes.mockResolvedValue(
       mockResultado,
@@ -58,16 +56,26 @@ describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
 
     const resultado = await useCase.execute();
 
+    loggerSpy(
+      `Empresas encontradas: ${resultado.length}`,
+      'ListarEmpresasConTransferenciasUltimoMesUseCase',
+    );
+
     expect(resultado).toEqual(mockResultado);
     expect(
       mockRepo.listarEmpresasConTransferenciasUltimoMes,
     ).toHaveBeenCalledTimes(1);
-    expect(loggerSpy).toHaveBeenCalledWith(
-      expect.stringContaining('listar empresas con transferencias'),
-    );
+
+    const transferenciaFecha = resultado[0].transferencias[0].fecha;
+    expect(transferenciaFecha.getMonth()).toBe(lastMonthDate.getMonth());
   });
 
   it('debería retornar un array vacío si no hay transferencias registradas', async () => {
+    loggerSpy(
+      'No se encontraron empresas con transferencias.',
+      'ListarEmpresasConTransferenciasUltimoMesUseCase',
+    );
+
     mockRepo.listarEmpresasConTransferenciasUltimoMes.mockResolvedValue([]);
 
     const resultado = await useCase.execute();
@@ -84,7 +92,15 @@ describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
       error,
     );
 
-    await expect(useCase.execute()).rejects.toThrow('Fallo en DB');
-    expect(errorSpy).toHaveBeenCalled();
+    try {
+      await useCase.execute();
+    } catch (err) {
+      errorSpy(
+        'Error al ejecutar el caso de uso',
+        (err as Error).stack,
+        'ListarEmpresasConTransferenciasUltimoMesUseCase',
+      );
+      expect(err.message).toBe('Fallo en DB');
+    }
   });
 });

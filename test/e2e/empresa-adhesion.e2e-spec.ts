@@ -1,17 +1,12 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
-import { z } from 'zod';
 
-const EmpresaSchema = z.object({
-  id: z.string(),
-  cuit: z.string(),
-  razonSocial: z.string(),
-  fechaAdhesion: z.string(),
-});
+import { EmpresaSchema } from './schemas/empresa-adhesion.schema';
 
+const logger = new Logger('Test empresa - Adhesion');
 describe('GET /empresas/adhesion (e2e)', () => {
   let app: INestApplication;
   let db: DataSource;
@@ -42,7 +37,7 @@ describe('GET /empresas/adhesion (e2e)', () => {
   });
 
   it('debería retornar empresas adheridas en el último mes', async () => {
-    console.log('[TEST] Consultando /empresas/adhesion...');
+    logger.debug(' Consultando /empresas/adhesion...');
 
     const res = await request(app.getHttpServer()).get('/empresas/adhesion');
 

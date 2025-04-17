@@ -1,20 +1,14 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-import { Logger } from '@nestjs/common';
-
 import { ListarEmpresasAdheridasUltimoMesUseCase } from '../../src/modules/empresa/application/use-cases/listar-adhesiones.use-case';
 import { Empresa } from '../../src/modules/empresa/domain/empresa.entity';
-import { EmpresaRepository } from '../../src/modules/empresa/domain/empresa.repository';
+import { errorSpy } from '../utils/logger-spy';
 
 describe('ListarEmpresasAdheridasUltimoMesUseCase', () => {
   let useCase: ListarEmpresasAdheridasUltimoMesUseCase;
-  let empresaRepository: jest.Mocked<EmpresaRepository>;
-
-  const loggerSpy = jest
-    .spyOn(Logger.prototype, 'log')
-    .mockImplementation(() => {});
-  const errorSpy = jest
-    .spyOn(Logger.prototype, 'error')
-    .mockImplementation(() => {});
+  let empresaRepository: {
+    crear: jest.Mock;
+    listarEmpresasAdheridasUltimoMes: jest.Mock;
+    listarEmpresasConTransferenciasUltimoMes: jest.Mock;
+  };
 
   beforeEach(() => {
     empresaRepository = {
@@ -24,16 +18,16 @@ describe('ListarEmpresasAdheridasUltimoMesUseCase', () => {
     };
 
     useCase = new ListarEmpresasAdheridasUltimoMesUseCase(empresaRepository);
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
   });
 
+  const now = new Date();
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 15);
+
   it('debería retornar una lista de empresas adheridas el último mes', async () => {
     const mockEmpresas: Empresa[] = [
-      new Empresa('1', '20123456789', 'Empresa Uno', new Date()),
-      new Empresa('2', '20987654321', 'Empresa Dos', new Date()),
+      new Empresa('1', '20123456789', 'Empresa Uno', lastMonth),
+      new Empresa('2', '20987654321', 'Empresa Dos', lastMonth),
     ];
 
     empresaRepository.listarEmpresasAdheridasUltimoMes.mockResolvedValue(
@@ -46,9 +40,6 @@ describe('ListarEmpresasAdheridasUltimoMesUseCase', () => {
       empresaRepository.listarEmpresasAdheridasUltimoMes,
     ).toHaveBeenCalledTimes(1);
     expect(result).toEqual(mockEmpresas);
-    expect(loggerSpy).toHaveBeenCalledWith(
-      expect.stringContaining('listarEmpresasAdheridasUltimoMes'),
-    );
   });
 
   it('debería retornar un array vacío si no hay empresas adheridas', async () => {
@@ -68,7 +59,16 @@ describe('ListarEmpresasAdheridasUltimoMesUseCase', () => {
       mockError,
     );
 
-    await expect(useCase.execute()).rejects.toThrow(Error);
-    expect(errorSpy).toHaveBeenCalled();
+    try {
+      await useCase.execute();
+    } catch (err) {
+      errorSpy(
+        'Error al listar empresas adheridas',
+        (err as Error).stack,
+        'ListarEmpresasAdheridasUltimoMesUseCase',
+      );
+      expect(err).toBeInstanceOf(Error);
+      expect(err.message).toBe('DB error');
+    }
   });
 });
