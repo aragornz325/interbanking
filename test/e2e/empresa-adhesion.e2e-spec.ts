@@ -3,6 +3,14 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
+import { z } from 'zod';
+
+const EmpresaSchema = z.object({
+  id: z.string(),
+  cuit: z.string(),
+  razonSocial: z.string(),
+  fechaAdhesion: z.string(),
+});
 
 describe('GET /empresas/adhesion (e2e)', () => {
   let app: INestApplication;
@@ -33,13 +41,21 @@ describe('GET /empresas/adhesion (e2e)', () => {
     await app.close();
   });
 
-  it('debería retornar empresas adheridas el último mes', async () => {
-    console.log('[TEST] Consultando empresas/adhesion justo ahora...');
+  it('debería retornar empresas adheridas en el último mes', async () => {
+    console.log('[TEST] Consultando /empresas/adhesion...');
+
     const res = await request(app.getHttpServer()).get('/empresas/adhesion');
 
-    expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    const result = EmpresaSchema.array().safeParse(res.body);
+
+    if (!result.success)
+      throw new Error(JSON.stringify(result.error.format(), null, 2));
+
+    const empresas = result.data.map((e) => e.razonSocial);
+
+    expect(empresas).toContain('Acme Corp');
+    expect(empresas).toContain('Wayne Enterprises');
+    expect(empresas).not.toContain('Umbrella Inc');
 
     for (const empresa of res.body) {
       expect(empresa).toHaveProperty('id');

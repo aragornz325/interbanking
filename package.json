@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "npm run seed:test && jest --config jest.config.e2e.ts",
+    "test:e2e": "npm run seed:test && jest --config jest.config.e2e.ts --runInBand --detectOpenHandles --forceExit",
     "seed": "ts-node -r tsconfig-paths/register seed/seed.ts",
     "seed:dev": "npm run seed -- dev",
     "seed:test": "ts-node -r tsconfig-paths/register seed/seed-test.ts",
@@ -46,7 +46,8 @@
     "rxjs": "^7.8.1",
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.22",
-    "typeorm-naming-strategies": "^4.1.0"
+    "typeorm-naming-strategies": "^4.1.0",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

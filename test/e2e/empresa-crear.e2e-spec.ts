@@ -9,6 +9,8 @@ describe('POST /empresas (e2e)', () => {
   let app: INestApplication;
   let db: DataSource;
 
+  const TEST_CUIT = '20999999999';
+
   beforeAll(async () => {
     process.env.NODE_ENV = 'test';
 
@@ -29,9 +31,11 @@ describe('POST /empresas (e2e)', () => {
     db = moduleFixture.get(DataSource);
   });
 
-  afterEach(async () => {
-    await db.query(`DELETE FROM transferencias;`);
-    await db.query(`DELETE FROM empresas;`);
+  beforeEach(async () => {
+    await db.query(
+      `DELETE FROM transferencias WHERE empresa_id IN (SELECT id FROM empresas WHERE cuit = '20999999999');`,
+    );
+    await db.query(`DELETE FROM empresas WHERE cuit = '20999999999';`);
   });
 
   afterAll(async () => {
@@ -40,14 +44,14 @@ describe('POST /empresas (e2e)', () => {
 
   it('debería crear una empresa y devolver su estructura', async () => {
     const res = await request(app.getHttpServer()).post('/empresas').send({
-      cuit: '20999999999',
+      cuit: TEST_CUIT,
       razonSocial: 'Empresa E2E',
     });
 
     expect(res.status).toBe(201);
     expect(res.body).toMatchObject({
       id: expect.any(String),
-      cuit: '20999999999',
+      cuit: TEST_CUIT,
       razonSocial: 'Empresa E2E',
       fechaAdhesion: expect.any(String),
     });
@@ -55,14 +59,12 @@ describe('POST /empresas (e2e)', () => {
 
   it('debería rechazar un CUIT duplicado', async () => {
     const payload = {
-      cuit: '20999999999',
+      cuit: TEST_CUIT,
       razonSocial: 'Empresa E2E',
     };
 
-    // Primer alta válida
     await request(app.getHttpServer()).post('/empresas').send(payload);
 
-    // Segundo intento duplicado
     const res = await request(app.getHttpServer())
       .post('/empresas')
       .send(payload);
