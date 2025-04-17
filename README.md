@@ -56,6 +56,22 @@ src/
 
 ---
 
+## 🧪 Tests
+
+- Tests unitarios y de integración
+- Mock de repositorios y DataSource
+- Pruebas de excepciones, controladores, casos de uso, middlewares y guards
+- 100% de cobertura en lógica de negocio
+
+### Cobertura actual
+
+```
+Statements   : 100%
+Branches     : 80.95%
+Functions    : 100%
+Lines        : 100%
+```
+
 ## ✅ Testing
 
 - `npm run test` → unitarios
@@ -63,16 +79,12 @@ src/
 - `npm run test:cov` → cobertura total
 
 Los tests unitarios están basados en mocks del dominio (`EmpresaRepository`), los E2E interactúan con la base real (entorno `test`).
-> Los tests unitarios validan la lógica del dominio usando datos mockeados con fechas controladas para simular el "último mes calendario". Los E2E testean con datos reales persistidos en la DB.
-
-- 📊 **Cobertura de Casos de Uso Críticos**: 100%  
-📦 Los 3 endpoints requeridos (crear empresa, listar adhesiones, listar transferencias) están completamente cubiertos por pruebas unitarias y e2e.
 
 ---
 
 ## 🧪 Seed para test
 
-Antes de correr los tests E2E:
+No es necesario, pero antes de correr los tests E2E se puede poblar la DB, de no hacerlo los test lo hacen automáticamente:
 
 ```bash
 npm run seed:test
@@ -115,6 +127,8 @@ El pipeline de CI incluye:
   - Reporte de cobertura
 
 Archivo: `.github/workflows/ci.yaml`
+
+![CI](https://github.com/tu-usuario/interbanking-challenge/actions/workflows/ci.yaml/badge.svg)
 
 ---
 

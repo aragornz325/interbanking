@@ -10,7 +10,25 @@ const config: Config = {
   moduleNameMapper: {
     '^src/(.*)$': '<rootDir>/src/$1',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/main.ts',
+    '!src/app.module.ts',
+    '!src/**/*.dto.ts',
+    '!src/**/*.interface.ts',
+    '!src/**/index.ts',
+    '!src/**/*.config.ts',
+    '!src/**/*.module.ts',
+    '!src/**/transferencia.repository.ts',
+    '!src/**/*.enum.ts',
+    '!src/**/typeorm/*.orm-entity.ts',
+  ],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/test/',
+    '/coverage/',
+  ],
   coverageDirectory: './coverage',
   testEnvironment: 'node',
 };
