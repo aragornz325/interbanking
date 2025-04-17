@@ -18,6 +18,7 @@ describe('GET /empresas/actividad (e2e)', () => {
   });
 
   it('debería devolver al menos una empresa con transferencia reciente', async () => {
+    console.log('[TEST] Consultando empresas/actividad justo ahora...');
     const res = await request(app.getHttpServer()).get('/empresas/actividad');
 
     expect(res.status).toBe(200);
