@@ -46,6 +46,14 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
+      - name: 🔄 Drop & recreate test database
+        run: |
+          psql -U $DB_USER -h 127.0.0.1 -d postgres -c "DROP DATABASE IF EXISTS interbanking_test;"
+          psql -U $DB_USER -h 127.0.0.1 -d postgres -c "CREATE DATABASE interbanking_test;"
+        env:
+          DB_USER: admin
+          PGPASSWORD: postgres
+
       - name: 🌱 Seed test database
         run: npm run seed:test
 

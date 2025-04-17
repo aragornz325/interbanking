@@ -5,13 +5,19 @@ import { Logger } from '@nestjs/common';
 import { startOfMonth, subMonths } from 'date-fns';
 import { config } from 'dotenv';
 import path from 'path';
-import { EmpresaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
-import { TransferenciaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import {
+  EmpresaOrmEntity,
+  TransferenciaOrmEntity,
+} from 'src/modules/empresa/infrastructure/persistence';
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-import { checkClean } from './utils/check-clean.util';
-import { waitForDb } from './utils/wait-for-db.util';
+import {
+  checkClean,
+  confirmTransferenciaPersistencia,
+  generateUniqueCuit,
+  waitForDb,
+} from './utils';
 
 if (!process.env.CI) {
   config({ path: path.resolve(__dirname, '../.test.env') });
@@ -42,6 +48,8 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
   );
   await AppDataSource.query('TRUNCATE TABLE empresas RESTART IDENTITY CASCADE');
 
+  await new Promise((res) => setTimeout(res, 100));
+
   const empresaRepo = AppDataSource.getRepository(EmpresaOrmEntity);
   const transferenciaRepo = AppDataSource.getRepository(TransferenciaOrmEntity);
 
@@ -49,11 +57,25 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
 
   const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
 
+  let cuit: string;
+  let intentos = 0;
+  let existente: EmpresaOrmEntity | null = null;
+
+  do {
+    cuit = generateUniqueCuit();
+    existente = await empresaRepo.findOne({ where: { cuit } });
+    intentos++;
+    if (existente) {
+      logger.warn(`[SEED] CUIT duplicado en intento ${intentos}: ${cuit}`);
+    }
+  } while (existente && intentos < 10);
+
+  if (existente) {
+    throw new Error('[SEED] No se pudo generar un CUIT único tras 10 intentos');
+  }
+
   const empresa = empresaRepo.create({
-    cuit: `CUIT-${Date.now()}-${Math.floor(Math.random() * 100000)}`.slice(
-      0,
-      11,
-    ),
+    cuit,
     razonSocial: 'Empresa Test',
     fechaAdhesion: new Date(
       Date.UTC(
@@ -90,10 +112,22 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
       ),
     ),
   });
+  logger.debug('[SEED] Confirmada persistencia en base de datos');
   await transferenciaRepo.save(transferencia);
+  await confirmTransferenciaPersistencia(transferenciaRepo, empresa.id, logger);
+
+  await AppDataSource.manager.transaction(async (manager) => {
+    const savedEmpresa = await manager.findOneByOrFail(EmpresaOrmEntity, {
+      cuit,
+    });
+    await manager.findOneByOrFail(TransferenciaOrmEntity, {
+      empresaId: savedEmpresa.id,
+    });
+    logger.debug('[SEED] Confirmada persistencia en base de datos');
+  });
 
   logger.debug('Datos de prueba insertados correctamente');
-  await new Promise((res) => setTimeout(res, 2000));
+  await new Promise((res) => setTimeout(res, 3000));
   await AppDataSource.destroy();
   logger.debug('SEED terminado y cerrando conexión...');
 }
