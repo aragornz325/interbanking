@@ -128,6 +128,56 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
 
   logger.debug('Datos de prueba insertados correctamente');
   await new Promise((res) => setTimeout(res, 3000));
+  const MAX_RETRIES = 5;
+  let visible = false;
+
+  for (let i = 0; i < MAX_RETRIES; i++) {
+    const visibles = await empresaRepo
+      .createQueryBuilder('e')
+      .where('e.fechaAdhesion >= :date', { date: lastMonthStart })
+      .getMany();
+
+    if (visibles.length > 0) {
+      logger.debug(`[SEED] Empresa visible en consulta de adhesión`);
+      visible = true;
+      break;
+    }
+
+    logger.debug(`[SEED] Empresa aún no visible. Retry ${i + 1}`);
+    await new Promise((res) => setTimeout(res, 1000));
+  }
+
+  if (!visible) {
+    throw new Error(
+      '[SEED] Empresa no visible para adhesión luego del máximo de reintentos',
+    );
+  }
+
+  // Confirmar visibilidad en la query usada por el endpoint de actividad
+  let visibleEnActividad = false;
+  for (let i = 0; i < 5; i++) {
+    const visibles = await transferenciaRepo
+      .createQueryBuilder('t')
+      .leftJoinAndSelect('t.empresa', 'e')
+      .where('t.fecha >= :date', { date: lastMonthStart })
+      .getMany();
+
+    if (visibles.length > 0) {
+      logger.debug('[SEED] Transferencia visible en consulta de actividad');
+      visibleEnActividad = true;
+      break;
+    }
+
+    logger.debug(`[SEED] Transferencia aún no visible. Retry ${i + 1}`);
+    await new Promise((res) => setTimeout(res, 1000));
+  }
+
+  if (!visibleEnActividad) {
+    throw new Error(
+      '[SEED] Transferencia no visible en actividad luego de varios intentos',
+    );
+  }
+
   await AppDataSource.destroy();
   logger.debug('SEED terminado y cerrando conexión...');
 }
