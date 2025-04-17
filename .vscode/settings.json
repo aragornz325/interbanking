@@ -6,8 +6,11 @@
   "eslint.options": {
     "overrideConfigFile": "eslint.config.mjs"
   },
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "true",
+    "source.fixAll": true,
     "source.fixAll.eslint": "explicit"
-  }
+  },
+  "eslint.experimental.useFlatConfig": true,
+  "prettier.enable": true
 }

@@ -32,16 +32,9 @@ const AppDataSource = new DataSource({
   namingStrategy: new SnakeNamingStrategy(),
 });
 
-/**
- * Ejecuta el seed de datos de prueba para entorno de testing.
- * Incluye una empresa adherida el mes pasado y una transferencia reciente.
- */
 async function seed({ logger }: { logger: Logger }): Promise<void> {
   await AppDataSource.initialize();
-  await waitForDb({
-    logger: logger,
-    dataSource: AppDataSource,
-  });
+  await waitForDb({ logger, dataSource: AppDataSource });
   logger.debug('Conectado a la base de datos');
 
   await AppDataSource.query(
@@ -52,11 +45,7 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
   const empresaRepo = AppDataSource.getRepository(EmpresaOrmEntity);
   const transferenciaRepo = AppDataSource.getRepository(TransferenciaOrmEntity);
 
-  await checkClean({
-    empresaRepo,
-    transferenciaRepo,
-    logger,
-  });
+  await checkClean({ empresaRepo, transferenciaRepo, logger });
 
   const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
 
@@ -98,20 +87,14 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
       ),
     ),
   });
-
   await transferenciaRepo.save(transferencia);
 
   logger.debug('Datos de prueba insertados correctamente');
-
-  // Espera para asegurar que PostgreSQL haya finalizado el write
   await new Promise((res) => setTimeout(res, 1000));
-
   await AppDataSource.destroy();
 }
 
-seed({
-  logger: logger,
-}).catch((err) => {
+seed({ logger }).catch((err) => {
   logger.error('[SEED-TEST] Error:', err);
   process.exit(1);
 });
