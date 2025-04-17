@@ -6,6 +6,7 @@
   "eslint.options": {
     "overrideConfigFile": "eslint.config.mjs"
   },
+  "files.eol": "\n",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,

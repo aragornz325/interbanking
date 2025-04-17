@@ -34,6 +34,7 @@ describe('GET /empresas/adhesion (e2e)', () => {
   });
 
   it('debería retornar empresas adheridas el último mes', async () => {
+    console.log('[TEST] Consultando empresas/adhesion justo ahora...');
     const res = await request(app.getHttpServer()).get('/empresas/adhesion');
 
     expect(res.status).toBe(200);

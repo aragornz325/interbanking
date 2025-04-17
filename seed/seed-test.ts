@@ -50,7 +50,10 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
   const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
 
   const empresa = empresaRepo.create({
-    cuit: faker.string.uuid().replace(/-/g, '').slice(0, 11),
+    cuit: `CUIT-${Date.now()}-${Math.floor(Math.random() * 100000)}`.slice(
+      0,
+      11,
+    ),
     razonSocial: 'Empresa Test',
     fechaAdhesion: new Date(
       Date.UTC(
@@ -90,8 +93,9 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
   await transferenciaRepo.save(transferencia);
 
   logger.debug('Datos de prueba insertados correctamente');
-  await new Promise((res) => setTimeout(res, 1000));
+  await new Promise((res) => setTimeout(res, 2000));
   await AppDataSource.destroy();
+  logger.debug('SEED terminado y cerrando conexión...');
 }
 
 seed({ logger }).catch((err) => {
