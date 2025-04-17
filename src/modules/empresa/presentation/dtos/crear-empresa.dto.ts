@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
-import { ICrearEmpresa } from './crear-empresa.interface';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+
+import { ICrearEmpresa } from './crear-empresa.interface';
 
 /**
  * DTO: CrearEmpresaDto

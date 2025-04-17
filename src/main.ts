@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import compression from 'compression';
+import helmet from 'helmet';
+
 import { AppModule } from './app.module';
 import { QueryErrorInterceptor } from './shared/exceptions/query-error.interceptor';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-import helmet from 'helmet';
-import compression from 'compression';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

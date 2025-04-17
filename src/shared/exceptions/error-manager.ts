@@ -1,12 +1,13 @@
-import { QueryFailedError } from 'typeorm';
-import {
-  DuplicateResourceException,
-  InvalidForeignKeyException,
-} from './custom.exceptions';
 import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { QueryFailedError } from 'typeorm';
+
+import {
+  DuplicateResourceException,
+  InvalidForeignKeyException,
+} from './custom.exceptions';
 
 interface PostgresError {
   driverError: {

@@ -1,10 +1,11 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import { EmpresaOrmEntity } from './empresa.orm-entity';
 
 /**
@@ -48,7 +49,9 @@ export class TransferenciaOrmEntity {
   @Column({ type: 'timestamp' })
   fecha!: Date;
 
-  @ManyToOne(() => EmpresaOrmEntity, { onDelete: 'CASCADE' })
+  @ManyToOne(() => EmpresaOrmEntity, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'empresa_id' })
   empresa!: EmpresaOrmEntity;
 

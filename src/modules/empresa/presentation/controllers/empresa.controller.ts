@@ -1,9 +1,4 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CrearEmpresaUseCase } from 'src/modules/empresa/application/use-cases/crear-empresa.use-case';
-import { ListarEmpresasAdheridasUltimoMesUseCase } from 'src/modules/empresa/application/use-cases/listar-adhesiones.use-case';
-import { ListarEmpresasConTransferenciasUltimoMesUseCase } from 'src/modules/empresa/application/use-cases/listar-transferencias.use-case';
-import { CrearEmpresaDto } from '../dtos/crear-empresa.dto';
-import { BaseController } from 'src/shared/utils/perform-controller-operation';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -11,6 +6,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CrearEmpresaUseCase } from 'src/modules/empresa/application/use-cases/crear-empresa.use-case';
+import { ListarEmpresasAdheridasUltimoMesUseCase } from 'src/modules/empresa/application/use-cases/listar-adhesiones.use-case';
+import { ListarEmpresasConTransferenciasUltimoMesUseCase } from 'src/modules/empresa/application/use-cases/listar-transferencias.use-case';
+import { BaseController } from 'src/shared/utils/perform-controller-operation';
+
+import { CrearEmpresaDto } from '../dtos/crear-empresa.dto';
 
 /**
  * Controlador HTTP: EmpresaController
@@ -52,8 +53,12 @@ export class EmpresaController extends BaseController {
    * }
    */
   @Post()
-  @ApiCreatedResponse({ description: 'Empresa creada con éxito' })
-  @ApiConflictResponse({ description: 'La empresa ya existe (CUIT duplicado)' })
+  @ApiCreatedResponse({
+    description: 'Empresa creada con éxito',
+  })
+  @ApiConflictResponse({
+    description: 'La empresa ya existe (CUIT duplicado)',
+  })
   @ApiBadRequestResponse({ description: 'Datos inválidos' })
   async crear(@Body() dto: CrearEmpresaDto) {
     return this.performControllerOperation({
@@ -74,7 +79,10 @@ export class EmpresaController extends BaseController {
    * @returns Lista de empresas adheridas.
    */
   @Get('adhesion')
-  @ApiResponse({ status: 200, description: 'Empresas adheridas el último mes' })
+  @ApiResponse({
+    status: 200,
+    description: 'Empresas adheridas el último mes',
+  })
   async listarAdheridas() {
     return this.performControllerOperation({
       functionName: 'listar empresas adheridas',

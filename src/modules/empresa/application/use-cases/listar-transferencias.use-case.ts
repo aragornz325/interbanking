@@ -1,11 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
-import {
-  EmpresaRepository,
-  EMPRESA_REPOSITORY,
-} from 'src/modules/empresa/domain/empresa.repository';
+import { Inject, Injectable } from '@nestjs/common';
 import { Empresa } from 'src/modules/empresa/domain/empresa.entity';
-import { BaseService } from 'src/shared/utils/perform-service-operation';
+import {
+  EMPRESA_REPOSITORY,
+  EmpresaRepository,
+} from 'src/modules/empresa/domain/empresa.repository';
 import { Transferencia } from 'src/modules/empresa/domain/transferencia.entity';
+import { BaseService } from 'src/shared/utils/perform-service-operation';
 
 @Injectable()
 export class ListarEmpresasConTransferenciasUltimoMesUseCase extends BaseService {
@@ -38,7 +38,10 @@ export class ListarEmpresasConTransferenciasUltimoMesUseCase extends BaseService
    * console.log(resultados[0].transferencias.length);
    */
   async execute(): Promise<
-    Array<{ empresa: Empresa; transferencias: Transferencia[] }>
+    Array<{
+      empresa: Empresa;
+      transferencias: Transferencia[];
+    }>
   > {
     return await this.performServiceOperation({
       functionName: 'listar empresas con transferencias',

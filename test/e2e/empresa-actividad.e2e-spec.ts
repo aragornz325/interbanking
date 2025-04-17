@@ -1,7 +1,7 @@
-import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
+import request from 'supertest';
 
 describe('GET /empresas/actividad (e2e)', () => {
   let app: INestApplication;
@@ -22,7 +22,6 @@ describe('GET /empresas/actividad (e2e)', () => {
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
-    console.log('[DEBUG /actividad]', res.body);
     expect(res.body.length).toBeGreaterThan(0);
 
     for (const item of res.body) {

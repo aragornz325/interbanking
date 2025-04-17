@@ -1,23 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-// Infraestructura y persistencia
-import {
-  EmpresaOrmEntity,
-  TransferenciaOrmEntity,
-  EmpresaRepositoryImpl,
-} from './infrastructure/persistence';
+// Token del repositorio
+import { EMPRESA_REPOSITORY } from 'src/modules/empresa/domain/empresa.repository';
 
 // Casos de uso (application layer)
 import { CrearEmpresaUseCase } from './application/use-cases/crear-empresa.use-case';
 import { ListarEmpresasAdheridasUltimoMesUseCase } from './application/use-cases/listar-adhesiones.use-case';
 import { ListarEmpresasConTransferenciasUltimoMesUseCase } from './application/use-cases/listar-transferencias.use-case';
-
+// Infraestructura y persistencia
+import {
+  EmpresaOrmEntity,
+  EmpresaRepositoryImpl,
+  TransferenciaOrmEntity,
+} from './infrastructure/persistence';
 // Presentación
 import { EmpresaController } from './presentation/controllers/empresa.controller';
-
-// Token del repositorio
-import { EMPRESA_REPOSITORY } from 'src/modules/empresa/domain/empresa.repository';
 
 @Module({
   imports: [
@@ -25,7 +22,10 @@ import { EMPRESA_REPOSITORY } from 'src/modules/empresa/domain/empresa.repositor
   ],
   controllers: [EmpresaController],
   providers: [
-    { provide: EMPRESA_REPOSITORY, useClass: EmpresaRepositoryImpl },
+    {
+      provide: EMPRESA_REPOSITORY,
+      useClass: EmpresaRepositoryImpl,
+    },
     CrearEmpresaUseCase,
     ListarEmpresasAdheridasUltimoMesUseCase,
     ListarEmpresasConTransferenciasUltimoMesUseCase,

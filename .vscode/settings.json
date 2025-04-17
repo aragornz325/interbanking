@@ -1,3 +1,16 @@
 {
-  "cSpell.words": ["cuit", "razon"]
+  "cSpell.words": ["cuit", "razon"],
+  "eslint.workingDirectories": ["./"],
+  "eslint.validate": ["typescript"],
+  "eslint.useFlatConfig": true,
+  "eslint.options": {
+    "overrideConfigFile": "eslint.config.mjs"
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.experimental.useFlatConfig": true,
+  "prettier.enable": true
 }
