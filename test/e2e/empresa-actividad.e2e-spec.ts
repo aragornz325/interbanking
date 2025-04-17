@@ -1,7 +1,7 @@
-import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
+import request from 'supertest';
 
 describe('GET /empresas/actividad (e2e)', () => {
   let app: INestApplication;

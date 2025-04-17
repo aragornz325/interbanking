@@ -1,11 +1,12 @@
 import 'reflect-metadata';
-import { DataSource } from 'typeorm';
+
 import { faker } from '@faker-js/faker';
-import { config } from 'dotenv';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { EmpresaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
-import { TransferenciaOrmEntity } from '../src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
 import { Logger } from '@nestjs/common';
+import { config } from 'dotenv';
+import { EmpresaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
+import { TransferenciaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import { DataSource } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 const envArg = process.argv[2] || 'dev';
 const envFile = `.${envArg}.env`;
@@ -57,7 +58,11 @@ async function seed({ logger }: { logger: Logger }) {
     return transferenciaRepo.create({
       cuentaDebito: faker.finance.accountNumber(),
       cuentaCredito: faker.finance.accountNumber(),
-      importe: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
+      importe: faker.number.float({
+        min: 1000,
+        max: 10000,
+        fractionDigits: 2,
+      }),
       fecha: faker.date.recent({ days: 60 }),
       empresa,
       empresaId: empresa.id,

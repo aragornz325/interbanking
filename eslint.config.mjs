@@ -1,16 +1,21 @@
-// @ts-check
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+import prettierConfig from './.prettierrc.cjs';
+
 import tseslint from 'typescript-eslint';
+import eslint from '@eslint/js';
+import prettier from 'eslint-plugin-prettier';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import unusedImports from 'eslint-plugin-unused-imports';
+import globals from 'globals';
+import importPlugin from 'eslint-plugin-import';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', '*.config.*'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
   {
     languageOptions: {
       parser: tseslint.parser,
@@ -27,12 +32,23 @@ export default tseslint.config(
     },
   },
   {
+    plugins: {
+      prettier,
+      'simple-import-sort': simpleImportSort,
+      'unused-imports': unusedImports,
+      import: importPlugin,
+    },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      //'@typescript-eslint/no-unsafe-call': 'off', // ⚠️ temporal para @InjectRepository
       '@typescript-eslint/no-unsafe-member-access': 'warn',
+
+      'prettier/prettier': ['error', prettierConfig],
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+      'unused-imports/no-unused-imports': 'error',
+      'import/no-duplicates': 'error',
     },
-  },
+  }
 );

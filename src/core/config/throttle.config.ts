@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ExecutionContext } from '@nestjs/common';
+import { ThrottlerModuleOptions } from '@nestjs/throttler';
 
 export const throttlerConfig: ThrottlerModuleOptions = {
   throttlers: [

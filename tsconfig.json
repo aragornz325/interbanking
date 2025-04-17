@@ -26,7 +26,9 @@
     "src/**/*.ts",
     "test/**/*.ts",
     "test/throttle.test.js",
-    "seed/**/*.ts"
+    "seed/**/*.ts",
+    "eslint.config.mjs",
+    ".eslintrc.cjs"
   ],
   "exclude": ["node_modules"]
 }

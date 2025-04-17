@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { Logger } from '@nestjs/common';
+
 import { ListarEmpresasConTransferenciasUltimoMesUseCase } from '../../src/modules/empresa/application/use-cases/listar-transferencias.use-case';
 import { Empresa } from '../../src/modules/empresa/domain/empresa.entity';
-import { Transferencia } from '../../src/modules/empresa/domain/transferencia.entity';
 import { EmpresaRepository } from '../../src/modules/empresa/domain/empresa.repository';
-import { Logger } from '@nestjs/common';
+import { Transferencia } from '../../src/modules/empresa/domain/transferencia.entity';
 
 describe('ListarEmpresasConTransferenciasUltimoMesUseCase', () => {
   let useCase: ListarEmpresasConTransferenciasUltimoMesUseCase;

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
-import { EmpresaRepository } from 'src/modules/empresa/domain/empresa.repository';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { Empresa } from 'src/modules/empresa/domain/empresa.entity';
-import { EmpresaOrmEntity } from './empresa.orm-entity';
-import { TransferenciaOrmEntity } from './transferencia.orm-entity';
-import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { EmpresaRepository } from 'src/modules/empresa/domain/empresa.repository';
 import { Transferencia } from 'src/modules/empresa/domain/transferencia.entity';
-import { DataSource } from 'typeorm';
 import { EmpresaConTransferenciasRaw } from 'src/shared/interfaces/empresa-transferenciaRaw';
 import { BaseService } from 'src/shared/utils/perform-service-operation';
+import { Between, DataSource, Repository } from 'typeorm';
+
+import { EmpresaOrmEntity } from './empresa.orm-entity';
+import { TransferenciaOrmEntity } from './transferencia.orm-entity';
 
 @Injectable()
 export class EmpresaRepositoryImpl
@@ -107,7 +107,10 @@ export class EmpresaRepositoryImpl
    * console.log(resultados[0].transferencias.length);
    */
   async listarEmpresasConTransferenciasUltimoMes(): Promise<
-    Array<{ empresa: Empresa; transferencias: Transferencia[] }>
+    Array<{
+      empresa: Empresa;
+      transferencias: Transferencia[];
+    }>
   > {
     return this.performServiceOperation({
       functionName: 'listarEmpresasConTransferenciasUltimoMes',

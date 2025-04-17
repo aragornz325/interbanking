@@ -1,14 +1,14 @@
 import 'reflect-metadata';
+
+import { faker } from '@faker-js/faker';
+import { Logger } from '@nestjs/common';
+import { startOfMonth, subMonths } from 'date-fns';
 import { config } from 'dotenv';
 import path from 'path';
-import { DataSource } from 'typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { Logger } from '@nestjs/common';
-import { faker } from '@faker-js/faker';
-import { subMonths, startOfMonth } from 'date-fns';
-
 import { EmpresaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
 import { TransferenciaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
+import { DataSource } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { checkClean } from './utils/check-clean.util';
 import { waitForDb } from './utils/wait-for-db.util';
@@ -82,7 +82,11 @@ async function seed({ logger }: { logger: Logger }): Promise<void> {
     empresaId: empresa.id,
     cuentaDebito: faker.finance.accountNumber(),
     cuentaCredito: faker.finance.accountNumber(),
-    importe: faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 }),
+    importe: faker.number.float({
+      min: 1000,
+      max: 10000,
+      fractionDigits: 2,
+    }),
     fecha: new Date(
       Date.UTC(
         lastMonthStart.getUTCFullYear(),

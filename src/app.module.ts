@@ -4,22 +4,19 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
-
-// Core
-import { LoggerMiddleware } from './core/middlewares/audit';
-import { CustomThrottlerGuard } from './core/guards/custom-throttler.guard';
-
-// Módulos propios
-import { EmpresaModule } from './modules/empresa/empresa.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Config
 import { throttlerConfig } from './core/config/throttle.config';
+import { CustomThrottlerGuard } from './core/guards/custom-throttler.guard';
+// Core
+import { LoggerMiddleware } from './core/middlewares/audit';
 import { getTypeOrmConfig } from './modules/database/orm.dataSource';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// Módulos propios
+import { EmpresaModule } from './modules/empresa/empresa.module';
 
 @Module({
   imports: [
@@ -43,8 +40,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+    consumer.apply(LoggerMiddleware).forRoutes({
+      path: '*path',
+      method: RequestMethod.ALL,
+    });
   }
 }

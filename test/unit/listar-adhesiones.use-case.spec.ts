@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { Logger } from '@nestjs/common';
+
 import { ListarEmpresasAdheridasUltimoMesUseCase } from '../../src/modules/empresa/application/use-cases/listar-adhesiones.use-case';
 import { Empresa } from '../../src/modules/empresa/domain/empresa.entity';
 import { EmpresaRepository } from '../../src/modules/empresa/domain/empresa.repository';
-import { Logger } from '@nestjs/common';
 
 describe('ListarEmpresasAdheridasUltimoMesUseCase', () => {
   let useCase: ListarEmpresasAdheridasUltimoMesUseCase;

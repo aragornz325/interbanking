@@ -1,7 +1,7 @@
-import { Repository } from 'typeorm';
+import { Logger } from '@nestjs/common';
 import { EmpresaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/empresa.orm-entity';
 import { TransferenciaOrmEntity } from 'src/modules/empresa/infrastructure/persistence/typeorm/transferencia.orm-entity';
-import { Logger } from '@nestjs/common';
+import { Repository } from 'typeorm';
 
 /**
  * Verifica que las tablas empresa y transferencia estén vacías

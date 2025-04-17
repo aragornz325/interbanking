@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import {
-  EmpresaRepository,
-  EMPRESA_REPOSITORY,
-} from 'src/modules/empresa/domain/empresa.repository';
 import { Empresa } from 'src/modules/empresa/domain/empresa.entity';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  EMPRESA_REPOSITORY,
+  EmpresaRepository,
+} from 'src/modules/empresa/domain/empresa.repository';
 import { BaseService } from 'src/shared/utils/perform-service-operation';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class CrearEmpresaUseCase extends BaseService {
