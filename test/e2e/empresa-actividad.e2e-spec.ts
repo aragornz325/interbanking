@@ -2,6 +2,28 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from 'src/app.module';
 import request from 'supertest';
+import { z } from 'zod';
+
+const EmpresaActividadSchema = z.array(
+  z.object({
+    empresa: z.object({
+      id: z.string(),
+      cuit: z.string(),
+      razonSocial: z.string(),
+      fechaAdhesion: z.string(),
+    }),
+    transferencias: z.array(
+      z.object({
+        id: z.string(),
+        empresaId: z.string(),
+        cuentaDebito: z.string(),
+        cuentaCredito: z.string(),
+        importe: z.number(),
+        fecha: z.string(),
+      }),
+    ),
+  }),
+);
 
 describe('GET /empresas/actividad (e2e)', () => {
   let app: INestApplication;
@@ -17,24 +39,28 @@ describe('GET /empresas/actividad (e2e)', () => {
     await app.init();
   });
 
-  it('debería devolver al menos una empresa con transferencia reciente', async () => {
-    console.log('[TEST] Consultando empresas/actividad justo ahora...');
+  it('debería devolver empresas con transferencias en el último mes', async () => {
+    console.log('[TEST] Consultando /empresas/actividad...');
     const res = await request(app.getHttpServer()).get('/empresas/actividad');
 
     expect(res.status).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+
+    const data = EmpresaActividadSchema.parse(res.body);
+    const empresas = data.map((e) => e.empresa.razonSocial);
+
+    expect(empresas).toContain('Acme Corp');
+    expect(empresas).toContain('Wayne Enterprises');
+    expect(empresas).not.toContain('Umbrella Inc');
 
     for (const item of res.body) {
       expect(item).toHaveProperty('empresa');
       expect(item).toHaveProperty('transferencias');
+      expect(item.transferencias.length).toBeGreaterThan(0);
 
       expect(item.empresa).toHaveProperty('id');
       expect(item.empresa).toHaveProperty('cuit');
       expect(item.empresa).toHaveProperty('razonSocial');
       expect(item.empresa).toHaveProperty('fechaAdhesion');
-
-      expect(Array.isArray(item.transferencias)).toBe(true);
 
       for (const t of item.transferencias) {
         expect(t).toHaveProperty('id');
