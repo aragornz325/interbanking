@@ -54,9 +54,6 @@ jobs:
           DB_USER: admin
           PGPASSWORD: postgres
 
-      - name: 🌱 Seed test database
-        run: npm run seed:test
-
       - name: 🧪 Run tests
         run: npm run test
 
